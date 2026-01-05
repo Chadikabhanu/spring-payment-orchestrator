@@ -1,0 +1,26 @@
+# --- Global ---
+.DS_Store
+.env
+.env.local
+.vscode/
+.idea/
+
+# --- Python / Backend ---
+backend/__pycache__/
+backend/*.pyc
+backend/venv/
+backend/.pytest_cache/
+
+# --- Node / Frontend / Checkout ---
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.npm/
+
+checkout-page/node_modules/
+checkout-page/build/
+checkout-page/dist/
+checkout-page/.npm/
+
+# --- Docker ---
+*.log
