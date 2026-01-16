@@ -1,0 +1,16 @@
+# Build stage using Eclipse Temurin (Valid Java 17 Image)
+FROM maven:3.9-eclipse-temurin-17-alpine AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+# Build the application
+RUN mvn clean package -DskipTests
+
+# Run stage
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+
+# UPDATED COMMAND FOR SPRING BOOT 3.2+:
+# Note the ".launch" package in the class name below
+CMD ["java", "-cp", "app.jar", "-Dloader.main=com.gateway.WorkerMain", "org.springframework.boot.loader.launch.JarLauncher"]

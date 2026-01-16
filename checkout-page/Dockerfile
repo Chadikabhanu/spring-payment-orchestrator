@@ -1,18 +1,16 @@
-# Use Node 18 Alpine image
-FROM node:18-alpine
+# Use a lightweight web server (Nginx)
+FROM nginx:alpine
 
-# Set working directory
-WORKDIR /app
+# Remove default Nginx website
+RUN rm -rf /usr/share/nginx/html/*
 
-# Copy package files first (better caching)
-COPY package*.json ./
+# Copy OUR specific files to the server
+COPY checkout.html /usr/share/nginx/html/index.html
+COPY checkout.html /usr/share/nginx/html/checkout.html
+COPY checkout.js /usr/share/nginx/html/checkout.js
 
-# Install dependencies
-RUN npm install
-
-# Copy source code
-COPY . .
-
-# Expose port and start the app
+# Expose port 80
 EXPOSE 80
-CMD ["npm", "run", "dev", "--", "--host", "--port", "80"]
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
