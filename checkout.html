@@ -150,21 +150,21 @@
         <form id="payment-form">
             <div class="form-group">
                 <label>Card Number</label>
-                <input type="text" value="4242 4242 4242 4242" disabled />
+                <input type="text" value="4242 4242 4242 4242" disabled data-test-id="card-input" />
             </div>
 
             <div class="row">
                 <div class="form-group" style="flex: 1;">
                     <label>Expiry</label>
-                    <input type="text" value="12 / 30" disabled />
+                    <input type="text" value="12 / 30" disabled data-test-id="expiry-input" />
                 </div>
                 <div class="form-group" style="flex: 1;">
                     <label>CVC</label>
-                    <input type="text" value="123" disabled />
+                    <input type="text" value="123" disabled data-test-id="cvc-input" />
                 </div>
             </div>
 
-            <button type="button" id="pay-btn">
+            <button type="button" id="pay-btn" data-test-id="pay-button">
                 <span id="btn-text">Pay ₹5000</span>
                 <div class="spinner" id="spinner"></div>
             </button>
@@ -200,8 +200,8 @@
             spinner.style.display = 'block';
 
             try {
-                // API Call
-                const response = await fetch('http://localhost:8000/api/v1/payments', {
+                // API Call (Points to Cloud URL - Ensure this matches your Render URL)
+                const response = await fetch('https://gateway-api-xxxx.onrender.com/api/v1/payments', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

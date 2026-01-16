@@ -1,0 +1,25 @@
+version: '1.0'
+
+setup:
+  - echo "Setting up environment..."
+  - docker compose build
+
+start:
+  - echo "Starting services..."
+  - docker compose up -d
+  # Wait for Postgres to be ready
+  - sleep 10 
+
+test:
+  - echo "Running internal tests..."
+  # If you have unit tests, uncomment the line below
+  # - docker compose exec gateway-api mvn test
+
+verify:
+  - echo "Verifying endpoints..."
+  - curl -f http://localhost:8000/actuator/health || exit 1
+  - curl -f http://localhost:3001/checkout.js || exit 1
+
+shutdown:
+  - echo "Shutting down..."
+  - docker compose down
