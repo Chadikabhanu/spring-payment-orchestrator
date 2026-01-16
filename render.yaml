@@ -1,0 +1,61 @@
+services:
+  # 1. The Database (Postgres)
+  - type: psql
+    name: payment-db
+    env: docker
+    plan: free
+    user: gateway_user
+    database: payment_gateway
+
+  # 2. The Cache (Redis)
+  - type: redis
+    name: payment-queue
+    plan: free
+    ipAllowList: [] # Internal only
+
+  # 3. The API Service
+  - type: web
+    name: gateway-api
+    env: docker
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: payment-db
+          property: connectionString
+      - key: SPRING_DATA_REDIS_HOST
+        fromService:
+          type: redis
+          name: payment-queue
+          property: host
+      - key: SPRING_DATA_REDIS_PORT
+        fromService:
+          type: redis
+          name: payment-queue
+          property: port
+
+  # 4. The Worker Service
+  - type: worker
+    name: gateway-worker
+    env: docker
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile.worker
+    plan: free
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: payment-db
+          property: connectionString
+      - key: SPRING_DATA_REDIS_HOST
+        fromService:
+          type: redis
+          name: payment-queue
+          property: host
+
+  # 5. The Frontend (Checkout Page)
+  - type: web
+    name: gateway-checkout
+    env: docker
+    dockerContext: ./checkout-page
+    plan: free
