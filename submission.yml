@@ -2,24 +2,29 @@ version: '1.0'
 
 setup:
   - echo "Setting up environment..."
-  - docker compose build
+  # If you had a build script, it would go here.
+  # For Docker Compose, the build happens in the start phase.
 
 start:
   - echo "Starting services..."
-  - docker compose up -d
-  # Wait for Postgres to be ready
-  - sleep 10 
+  - docker compose up -d --build
+  # Wait for services to be healthy (giving Postgres 10s is a safe bet)
+  - sleep 15
 
 test:
   - echo "Running internal tests..."
-  # If you have unit tests, uncomment the line below
+  # If you have unit tests, uncomment:
   # - docker compose exec gateway-api mvn test
 
 verify:
   - echo "Verifying endpoints..."
+  # Check if API is up
   - curl -f http://localhost:8000/actuator/health || exit 1
-  - curl -f http://localhost:3001/checkout.js || exit 1
+  # Check if Checkout Page is up
+  - curl -f http://localhost:3001/checkout.html || exit 1
+  # Check Redis connection
+  - docker compose exec payment-queue redis-cli ping || exit 1
 
 shutdown:
   - echo "Shutting down..."
-  - docker compose down
+  - docker compose down -v
