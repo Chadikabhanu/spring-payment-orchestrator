@@ -17,6 +17,8 @@ services:
       retries: 5
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      # 👇 THIS LINE IS CRITICAL FOR AUTOMATED TESTS
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   redis:
     image: redis:7-alpine
@@ -78,14 +80,16 @@ services:
     depends_on:
       - api
 
-  dashboard:
-    build: 
-      context: ./frontend
-    container_name: gateway_dashboard
-    ports:
-      - "3000:80"
-    depends_on:
-      - api
+  # Only include this if you actually have a frontend folder!
+  # If you don't, comment this section out or the build will fail.
+  # dashboard:
+  #   build: 
+  #     context: ./frontend
+  #   container_name: gateway_dashboard
+  #   ports:
+  #     - "3000:80"
+  #   depends_on:
+  #     - api
 
 volumes:
   postgres_data:
